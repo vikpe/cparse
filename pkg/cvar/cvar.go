@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/csv"
 	"errors"
-	"fmt"
 	"os"
 	"strings"
 
@@ -12,11 +11,17 @@ import (
 )
 
 const declarationPrefix = "cvar_t"
+const staticdeclarationPrefix = "static cvar_t"
+
+/*const FlagNone = 0
+const FlagServerinfo = 1 << 0  // mirrored to serverinfo
+const FlagReadOnly = 1 << 1    // read only
+const FlagUserCreated = 1 << 2 // created by a set command*/
 
 type Cvar struct {
 	Name         string `json:"name"`
 	DefaultValue string `json:"default_value"`
-	SaveOnExit   string `json:"save_on_exit"`
+	Flags        string `json:"string"`
 	OnChange     string `json:"on_change"`
 	Description  string `json:"description"`
 }
@@ -59,9 +64,8 @@ func FromLine(line string) (Cvar, error) {
 }
 
 func declarationCsvFromLine(line string) (string, error) {
-	if !strings.HasPrefix(line, declarationPrefix) {
-		errorMsg := fmt.Sprintf("missing declaration prefix (%s)", declarationPrefix)
-		return "", errors.New(errorMsg)
+	if !strings.HasPrefix(line, declarationPrefix) && !strings.HasPrefix(line, staticdeclarationPrefix) {
+		return "", errors.New("missing declaration prefix")
 	}
 
 	indexOpen := strings.Index(line, "{")
@@ -98,7 +102,7 @@ func fromCsv(csvStr string) (Cvar, error) {
 func fromRecord(record []string) (Cvar, error) {
 	const IndexName = 0
 	const IndexDefaultValue = 1
-	const IndexSomething = 2
+	const IndexFlags = 2
 	const IndexOnChange = 3
 
 	result := Cvar{}
@@ -112,8 +116,8 @@ func fromRecord(record []string) (Cvar, error) {
 		result.DefaultValue = record[IndexDefaultValue]
 	}
 
-	if fieldCount > IndexSomething {
-		result.SaveOnExit = record[IndexSomething]
+	if fieldCount > IndexFlags {
+		result.Flags = record[IndexFlags]
 	}
 
 	if fieldCount > IndexOnChange {

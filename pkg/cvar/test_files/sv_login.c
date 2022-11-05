@@ -37,4 +37,11 @@ cvar_t sv_login_web = { "sv_login_web", "1" }; // 0=local files, 1=auth via webs
 #define LoginMustHaveLocalAccount() (LoginModeMandatoryWeb() || LoginModeFileBased())
 
 cvar_t		sv_local_addr = {"sv_local_addr", "", CVAR_ROM};
+//cvar_t	sv_antilag		= { "sv_antilag", "", CVAR_SERVERINFO};
+cvar_t	pm_pground		= { "pm_pground", "", CVAR_SERVERINFO|CVAR_ROM};
 
+/*
+foo
+*/
+
+static cvar_t qtv_pendingtimeout = {"qtv_pendingtimeout",  "5"}; // 5  seconds must be enough

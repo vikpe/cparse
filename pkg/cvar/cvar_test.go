@@ -31,7 +31,17 @@ func TestFromFilePath(t *testing.T) {
 			{
 				Name:         "sv_local_addr",
 				DefaultValue: "",
-				SaveOnExit:   "CVAR_ROM",
+				Flags:        "CVAR_ROM",
+			},
+			{
+				Name:         "pm_pground",
+				DefaultValue: "",
+				Flags:        "CVAR_SERVERINFO|CVAR_ROM",
+			},
+			{
+				Name:         "qtv_pendingtimeout",
+				DefaultValue: "5",
+				Description:  "5  seconds must be enough",
 			},
 		}
 
@@ -43,26 +53,28 @@ func TestFromFilePath(t *testing.T) {
 
 func TestFromLine(t *testing.T) {
 	testCases := map[string]cvar.Cvar{
-		"":                                       {},
-		"foo":                                    {},
-		"foo sv_login":                           {},
-		"cvar_t sv_login":                        {},
-		"cvar_t sv_login {":                      {},
-		"cvar_t sv_login }":                      {},
-		"cvar_t sv_login {  }":                   {},
-		`foo sv_login = { "sv_login" };`:         {},
-		`cvar_t sv_login = { "sv_login" };`:      {Name: "sv_login"},
-		`cvar_t sv_login = { "sv_login", "1" };`: {Name: "sv_login", DefaultValue: "1"},
-		`cvar_t sv_login = { "sv_login", "1", 1 };`:              {Name: "sv_login", DefaultValue: "1", SaveOnExit: "1"},
-		`cvar_t sv_login = { "sv_login", "1", 1, callback };`:    {Name: "sv_login", DefaultValue: "1", SaveOnExit: "1", OnChange: "callback"},
-		`cvar_t sv_login = { "sv_login", "1" }; // allow logins`: {Name: "sv_login", DefaultValue: "1", Description: "allow logins"},
+		"":                                  {},
+		"foo":                               {},
+		"foo sv_login":                      {},
+		"cvar_t sv_login":                   {},
+		"cvar_t sv_login {":                 {},
+		"cvar_t sv_login }":                 {},
+		"cvar_t sv_login {  }":              {},
+		`foo sv_login = { "sv_login" };`:    {},
+		`cvar_t sv_login = { "sv_login" };`: {Name: "sv_login"},
+		`static cvar_t sv_login = { "sv_login" };`:                                     {Name: "sv_login"},
+		`cvar_t sv_login = { "sv_login", "1" };`:                                       {Name: "sv_login", DefaultValue: "1"},
+		`cvar_t sv_login = { "sv_login", "1", CVAR_ROM };`:                             {Name: "sv_login", DefaultValue: "1", Flags: "CVAR_ROM"},
+		`cvar_t sv_login = { "sv_login", "1", CVAR_SERVERINFO | CVAR_ROM, callback };`: {Name: "sv_login", DefaultValue: "1", Flags: "CVAR_SERVERINFO | CVAR_ROM", OnChange: "callback"},
+		`cvar_t sv_login = { "sv_login", "1" }; // allow logins`:                       {Name: "sv_login", DefaultValue: "1", Description: "allow logins"},
 	}
 
+	testCaseNumber := 1
 	for line, expect := range testCases {
-		t.Run(line, func(t *testing.T) {
-			cv, err := cvar.FromLine(line)
-			fmt.Println(err)
+		t.Run(fmt.Sprintf("testcase %d", testCaseNumber), func(t *testing.T) {
+			cv, _ := cvar.FromLine(line)
 			assert.Equal(t, expect, cv)
+			testCaseNumber++
 		})
 	}
 }
