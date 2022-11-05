@@ -21,7 +21,7 @@ const FlagUserCreated = 1 << 2 // created by a set command*/
 type Cvar struct {
 	Name         string `json:"name"`
 	DefaultValue string `json:"default_value"`
-	Flags        string `json:"string"`
+	Flags        string `json:"flags"`
 	OnChange     string `json:"on_change"`
 	Description  string `json:"description"`
 }
