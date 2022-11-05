@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"cparse/pkg/comment"
 	"github.com/stretchr/testify/assert"
+	"github.com/vikpe/cparse/pkg/comment"
 )
 
 func TestFromSingleLine(t *testing.T) {
