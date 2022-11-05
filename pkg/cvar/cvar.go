@@ -16,7 +16,7 @@ const declarationPrefix = "cvar_t"
 type Cvar struct {
 	Name         string `json:"name"`
 	DefaultValue string `json:"default_value"`
-	SaveOnExit   string `json:"something"`
+	SaveOnExit   string `json:"save_on_exit"`
 	OnChange     string `json:"on_change"`
 	Description  string `json:"description"`
 }
