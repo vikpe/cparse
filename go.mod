@@ -1,4 +1,4 @@
-module cparse
+module github.com/vikpe/cparse
 
 go 1.18
 
